@@ -37,7 +37,7 @@ public class PizzaController {
 			return templateToEdit;
 		}
 		
-		pizzaService.save(pizza);
+		service.save(pizza);
 		return templateToRedirect;
 	}
 	
@@ -49,31 +49,31 @@ public class PizzaController {
 	}
 	
 	private String changeTheDeletedValue(int id , boolean trashed) {
-		Optional<Pizza> optPizza = pizzaService.findById(id);
+		Optional<Pizza> optPizza = service.findById(id);
 		Pizza pizza = optPizza.get();
 		pizza.setDeleted(trashed);
-		pizzaService.save(pizza);
+		service.save(pizza);
 		return "redirect:/pizzas/";
 	}
 	
 	@Autowired
-	private PizzaService pizzaService;
+	private PizzaService service;
 	
 	@GetMapping("/")
 	public String index(Model model ) {
-		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		List<Pizza> pizzas = service.findAllAvailablePizzas();
 		return getPizzas(pizzas , "Lista pizze" , "pizza/index" , model);
 	}
 	
 	@PostMapping("/")
 	public String index(Model model , @RequestParam(name = "name") String name) {
-		List<Pizza> pizzas = pizzaService.filterByNameForAvailablePizzas(name);
+		List<Pizza> pizzas = service.filterByNameForAvailablePizzas(name);
 		return getPizzas(pizzas , "Lista pizze" , "pizza/index" , model);
 	}
 	
 	@GetMapping("/{id}")
 	public String show(Model model , @PathVariable("id") int id) {
-		Optional<Pizza> optPizza = pizzaService.findById(id);
+		Optional<Pizza> optPizza = service.findById(id);
 		Pizza pizza = optPizza.get();
 		pageTitle = "Pizza " + pizza.getName();
 		model.addAttribute("pizza" , pizza);
@@ -93,7 +93,7 @@ public class PizzaController {
 	
 	@GetMapping("/edit/{id}")
 	public String edit(Model model , @PathVariable("id") int id) {
-		Optional<Pizza> optPizza = pizzaService.findById(id);
+		Optional<Pizza> optPizza = service.findById(id);
 		Pizza pizza = optPizza.get();
 		pageTitle = "Modifica la pizza: " + pizza.getName();
 		return modifyOrCreatePizza(pizza , pageTitle , "Modifica elemento" , "pizza/edit" , model);
@@ -112,23 +112,23 @@ public class PizzaController {
 	
 	@PostMapping("/soft-delete-all")
 	public String softDeleteAll() {
-		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		List<Pizza> pizzas = service.findAllAvailablePizzas();
 		for(Pizza pizza : pizzas) {
 			pizza.setDeleted(true);
-			pizzaService.save(pizza);
+			service.save(pizza);
 		}
 		return "redirect:/pizzas/";
 	}
 	
 	@GetMapping("/trash")
 	public String trash(Model model ) {
-		List<Pizza> pizzas = pizzaService.findAllTrashedPizzas();
+		List<Pizza> pizzas = service.findAllTrashedPizzas();
 		return getPizzas(pizzas , "Lista pizze cestinate" , "pizza/trash" , model);
 	}
 	
 	@PostMapping("/trash")
 	public String trash(Model model , @RequestParam(name = "name") String name) {
-		List<Pizza> pizzas = pizzaService.filterByNameForTrashedPizzas(name);
+		List<Pizza> pizzas = service.filterByNameForTrashedPizzas(name);
 		return getPizzas(pizzas , "Lista pizze cestinate" , "pizza/trash" , model);
 	}
 	
@@ -139,26 +139,26 @@ public class PizzaController {
 	
 	@PostMapping("/refresh-all")
 	public String refreshAll() {
-		List<Pizza> pizzas = pizzaService.findAllTrashedPizzas();
+		List<Pizza> pizzas = service.findAllTrashedPizzas();
 		for(Pizza pizza : pizzas) {
 			pizza.setDeleted(false);
-			pizzaService.save(pizza);
+			service.save(pizza);
 		}
 		return "redirect:/pizzas/trash";
 	}
 	
 	@PostMapping("/delete/{id}")
 	public String delete(@PathVariable("id") int id) {
-		Optional<Pizza> optPizza = pizzaService.findById(id);
+		Optional<Pizza> optPizza = service.findById(id);
 		Pizza pizza = optPizza.get();
-		pizzaService.delete(pizza);
+		service.delete(pizza);
 		return "redirect:/pizzas/trash";
 	}
 	
 	@PostMapping("/delete-all")
 	public String deleteAll() {
-		List<Pizza> pizzas = pizzaService.findAllTrashedPizzas();
-		pizzaService.deleteAll(pizzas);
+		List<Pizza> pizzas = service.findAllTrashedPizzas();
+		service.deleteAll(pizzas);
 		return "redirect:/pizzas/trash";
 	}
 }

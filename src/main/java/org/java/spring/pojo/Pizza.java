@@ -1,11 +1,14 @@
 package org.java.spring.pojo;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.URL;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +19,9 @@ public class Pizza {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@OneToMany(mappedBy = "pizza")
+	private List<SpecialOffer> specialOffers;
 	
 	@NotBlank
 	@Size(min = 3 , max = 100)
@@ -48,6 +54,14 @@ public class Pizza {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public List<SpecialOffer> getSpecialOffers() {
+		return specialOffers;
+	}
+
+	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
+		this.specialOffers = specialOffers;
 	}
 
 	public String getName() {
