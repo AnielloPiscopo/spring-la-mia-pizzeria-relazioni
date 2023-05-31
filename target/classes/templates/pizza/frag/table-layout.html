@@ -1,0 +1,97 @@
+<div class="my_table-container" th:fragment="table(index,pizzas)">
+  <div class="my_container">
+    <h1>[[${title}]]</h1>
+    <form method="POST">
+      <input type="text" name="name" />
+      <button type="submit">Filtra</button>
+    </form>
+    <div class="my_btn-container">
+      <a th:if="${index}" th:href="@{/pizzas/create}">Create new pizza</a>
+      <a th:if="${index}" th:href="@{/pizzas/trash}">Go to the recycle bean</a>
+      <a th:unless="${index}" th:href="@{/pizzas/}">Return back</a>
+      <form
+        th:if="${index}"
+        th:action="@{/pizzas/soft-delete-all}"
+        method="POST"
+      >
+        <button type="submit">Trash all</button>
+      </form>
+      <form
+        th:unless="${index}"
+        th:action="@{/pizzas/refresh-all}"
+        method="POST"
+      >
+        <button type="submit">Refresh all</button>
+      </form>
+      <form
+        th:unless="${index}"
+        th:action="@{/pizzas/delete-all}"
+        method="POST"
+      >
+        <button type="submit">Delete all</button>
+      </form>
+    </div>
+    <div class="my_btn-container"></div>
+  </div>
+
+  <table th:unless="${pizzas.isEmpty()}">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Nome</th>
+        <th>Descrizione</th>
+        <th>Img_Url</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr th:each="pizza : ${pizzas}" th:object="${pizza}">
+        <td scope="row">
+          <span>[[*{id}]]</span>
+        </td>
+        <td>
+          <span>[[*{name}]]</span>
+        </td>
+        <td>
+          <span>[[*{description}]]</span>
+        </td>
+        <td>
+          <span>[[*{imgUrl}]]</span>
+        </td>
+        <td>
+          <span>[[*{price}]] $</span>
+        </td>
+        <td>
+          <a th:href="@{/pizzas/{id} (id=${pizza.id})}">Show</a>
+          <a th:if="${index}" th:href="@{/pizzas/edit/{id} (id=${pizza.id})}"
+            >Edit</a
+          >
+          <form
+            th:if="${index}"
+            th:action="@{/pizzas/soft-delete/{id} (id=${pizza.id})}"
+            method="POST"
+          >
+            <button type="submit">Send to the recycle bean</button>
+          </form>
+          <form
+            th:unless="${index}"
+            th:action="@{/pizzas/refresh/{id} (id=${pizza.id})}"
+            method="POST"
+          >
+            <button type="submit">Refresh</button>
+          </form>
+          <form
+            th:unless="${index}"
+            th:action="@{/pizzas/delete/{id} (id=${pizza.id})}"
+            method="POST"
+          >
+            <button type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div th:if="${pizzas.isEmpty()}">Non ci sono elementi nella tabella</div>
+</div>
