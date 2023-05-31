@@ -8,7 +8,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -24,14 +26,18 @@ public class SpecialOffer {
 	@Size(min = 3 , max = 100)
 	private String title;
 	
-	@NotBlank
+	@NotNull
 	private LocalDate start;
 	
-	@NotBlank
+	@NotNull
 	private LocalDate end;
 	
-	@NotBlank
+	@NotNull
+	@Min(5)
+	@Max(95)
 	private int discount;
+	
+	private boolean deleted = false;
 	
 	public SpecialOffer() {}
 
@@ -90,5 +96,13 @@ public class SpecialOffer {
 
 	public void setDiscount(int discount) {
 		this.discount = discount;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 }

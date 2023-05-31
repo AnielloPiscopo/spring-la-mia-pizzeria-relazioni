@@ -61,19 +61,19 @@ public class PizzaController {
 	
 	@GetMapping("/")
 	public String index(Model model ) {
-		List<Pizza> pizzas = service.findAllAvailablePizzas();
+		List<Pizza> pizzas = service.findAllAvailablePizzasWithRel();
 		return getPizzas(pizzas , "Lista pizze" , "pizza/index" , model);
 	}
 	
 	@PostMapping("/")
 	public String index(Model model , @RequestParam(name = "name") String name) {
-		List<Pizza> pizzas = service.filterByNameForAvailablePizzas(name);
+		List<Pizza> pizzas = service.filterByNameForAvailablePizzasWithRel(name);
 		return getPizzas(pizzas , "Lista pizze" , "pizza/index" , model);
 	}
 	
 	@GetMapping("/{id}")
 	public String show(Model model , @PathVariable("id") int id) {
-		Optional<Pizza> optPizza = service.findById(id);
+		Optional<Pizza> optPizza = service.findByIdWithRel(id);
 		Pizza pizza = optPizza.get();
 		pageTitle = "Pizza " + pizza.getName();
 		model.addAttribute("pizza" , pizza);
@@ -93,7 +93,7 @@ public class PizzaController {
 	
 	@GetMapping("/edit/{id}")
 	public String edit(Model model , @PathVariable("id") int id) {
-		Optional<Pizza> optPizza = service.findById(id);
+		Optional<Pizza> optPizza = service.findByIdWithRel(id);
 		Pizza pizza = optPizza.get();
 		pageTitle = "Modifica la pizza: " + pizza.getName();
 		return modifyOrCreatePizza(pizza , pageTitle , "Modifica elemento" , "pizza/edit" , model);
@@ -112,7 +112,7 @@ public class PizzaController {
 	
 	@PostMapping("/soft-delete-all")
 	public String softDeleteAll() {
-		List<Pizza> pizzas = service.findAllAvailablePizzas();
+		List<Pizza> pizzas = service.findAllAvailablePizzasWithRel();
 		for(Pizza pizza : pizzas) {
 			pizza.setDeleted(true);
 			service.save(pizza);
@@ -122,13 +122,13 @@ public class PizzaController {
 	
 	@GetMapping("/trash")
 	public String trash(Model model ) {
-		List<Pizza> pizzas = service.findAllTrashedPizzas();
+		List<Pizza> pizzas = service.findAllTrashedPizzasWithRel();
 		return getPizzas(pizzas , "Lista pizze cestinate" , "pizza/trash" , model);
 	}
 	
 	@PostMapping("/trash")
 	public String trash(Model model , @RequestParam(name = "name") String name) {
-		List<Pizza> pizzas = service.filterByNameForTrashedPizzas(name);
+		List<Pizza> pizzas = service.filterByNameForTrashedPizzasWithRel(name);
 		return getPizzas(pizzas , "Lista pizze cestinate" , "pizza/trash" , model);
 	}
 	
@@ -139,7 +139,7 @@ public class PizzaController {
 	
 	@PostMapping("/refresh-all")
 	public String refreshAll() {
-		List<Pizza> pizzas = service.findAllTrashedPizzas();
+		List<Pizza> pizzas = service.findAllTrashedPizzasWithRel();
 		for(Pizza pizza : pizzas) {
 			pizza.setDeleted(false);
 			service.save(pizza);
@@ -149,7 +149,7 @@ public class PizzaController {
 	
 	@PostMapping("/delete/{id}")
 	public String delete(@PathVariable("id") int id) {
-		Optional<Pizza> optPizza = service.findById(id);
+		Optional<Pizza> optPizza = service.findByIdWithRel(id);
 		Pizza pizza = optPizza.get();
 		service.delete(pizza);
 		return "redirect:/pizzas/trash";
@@ -157,7 +157,7 @@ public class PizzaController {
 	
 	@PostMapping("/delete-all")
 	public String deleteAll() {
-		List<Pizza> pizzas = service.findAllTrashedPizzas();
+		List<Pizza> pizzas = service.findAllTrashedPizzasWithRel();
 		service.deleteAll(pizzas);
 		return "redirect:/pizzas/trash";
 	}

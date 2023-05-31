@@ -42,6 +42,9 @@
         <th>Descrizione</th>
         <th>Img_Url</th>
         <th>Price</th>
+        <th>Special Offers</th>
+        <th>Discounted Price</th>
+        <th>Actions</th>
       </tr>
     </thead>
 
@@ -61,6 +64,16 @@
         </td>
         <td>
           <span>[[*{price}]] $</span>
+        </td>
+        <td>
+          <span
+            th:each="specialOffer : *{specialOffers}"
+            th:object="${specialOffer}"
+            >[[*{title}]] - [[*{discount}]]%</span
+          >
+        </td>
+        <td>
+          <span>[[*{discountedPrice}]] $</span>
         </td>
         <td>
           <a th:href="@{/pizzas/{id} (id=${pizza.id})}">Show</a>

@@ -37,6 +37,8 @@ public class Pizza {
 	@Min(1)
 	private float price;
 	
+	private float discountedPrice;
+	
 	private boolean deleted = false;
 	
 	public Pizza(){}
@@ -94,6 +96,18 @@ public class Pizza {
 
 	public void setPrice(float price) {
 		this.price = price;
+	}
+	
+	public float getDiscountedPrice() {
+		int maxDiscount = 0;
+		
+		for(SpecialOffer so : getSpecialOffers()) {
+			maxDiscount += so.getDiscount();
+		}
+		
+		float discountedPrice = getPrice() - (getPrice()/100 * maxDiscount);
+		
+		return discountedPrice;
 	}
 	
 	public boolean isDeleted() {

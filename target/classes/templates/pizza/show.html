@@ -10,6 +10,17 @@
       <div>[[*{price}]]$</div>
 
       <a th:href="@{/pizzas/}">Go to index</a>
+
+      <ul>
+        <li
+          th:each="specialOffer : *{specialOffers}"
+          th:object="${specialOffer}"
+        >
+          <div>[[*{title}]]</div>
+          <div>[[*{start}]] - [[*{end}]]</div>
+          <div>[[*{discount}]]%</div>
+        </li>
+      </ul>
     </main>
   </body>
 </html>
