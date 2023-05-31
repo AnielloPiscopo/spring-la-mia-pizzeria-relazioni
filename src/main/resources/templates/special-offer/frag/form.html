@@ -1,10 +1,10 @@
 <form
   method="POST"
   th:fragment="form(create , btnText , specialOffer)"
-  th:action="${create} ? @{/special-offer/create} : @{/special-offer/edit/{id} (id=${specialOffer.id})}"
-  th:object="${pizza}"
+  th:action="${create} ? @{/special-offers/create} : @{/special-offers/edit/{id} (id=${specialOffer.id})}"
+  th:object="${specialOffer}"
 >
-  <!-- <div class="my_form-el">
+  <div class="my_form-el">
     <input
       type="text"
       name="title"
@@ -12,7 +12,7 @@
       placeholder="Inserisci titolo"
       modelAttribute="specialOffer"
     />
-  </div> -->
+  </div>
   <div class="my_form-el">
     <input
       type="date"
@@ -53,7 +53,7 @@
         th:each="pizza : ${pizzas}"
         th:object="${pizza}"
         th:value="*{id}"
-        th:selected="${specialOffer.pizza.id==pizza.id}"
+        th:selected="${create} ? '' : ${specialOffer.pizza.id==pizza.id}"
       >
         [[ *{name} ]]
       </option>

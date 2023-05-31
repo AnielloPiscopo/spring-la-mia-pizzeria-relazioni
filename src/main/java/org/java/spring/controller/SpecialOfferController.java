@@ -3,7 +3,9 @@ package org.java.spring.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.java.spring.pojo.Pizza;
 import org.java.spring.pojo.SpecialOffer;
+import org.java.spring.services.PizzaService;
 import org.java.spring.services.SpecialOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,11 +30,11 @@ public class SpecialOfferController {
 		return template;
 	}
 	
-	private String saveInDb(SpecialOffer specialOffer , BindingResult br , String templateToEdit , String templateToRedirect , String title , String btnText , Model model) {
+	private String saveInDb(SpecialOffer specialOffer , List<Pizza> pizzas , BindingResult br , String templateToEdit , String templateToRedirect , String title , String btnText , Model model) {
 		if(br.hasErrors()) {
 			model.addAttribute("specialOffer" , specialOffer);
 			model.addAttribute("errors" , br);
-			modifyOrCreateSpecialOffer(specialOffer, title, btnText, templateToRedirect, model);
+			modifyOrCreateSpecialOffer(specialOffer, pizzas , title, btnText, templateToRedirect, model);
 			return templateToEdit;
 		}
 		
@@ -40,9 +42,10 @@ public class SpecialOfferController {
 		return templateToRedirect;
 	}
 	
-	private String modifyOrCreateSpecialOffer(SpecialOffer specialOffer , String title , String btnText , String template , Model model) {
+	private String modifyOrCreateSpecialOffer(SpecialOffer specialOffer , List<Pizza> pizzas , String title , String btnText , String template , Model model) {
 		model.addAttribute("btnText" , btnText);
 		model.addAttribute("specialOffer", specialOffer);
+		model.addAttribute("pizzas" , pizzas);
 		model.addAttribute("title" , title);
 		return template;
 	}
@@ -57,6 +60,9 @@ public class SpecialOfferController {
 	
 	@Autowired
 	private SpecialOfferService service;
+	
+	@Autowired
+	private PizzaService pizzaService;
 	
 	@GetMapping("/")
 	public String index(Model model ) {
@@ -76,12 +82,14 @@ public class SpecialOfferController {
 	
 	@GetMapping("/create")
 	public String create(Model model) {
-		return modifyOrCreateSpecialOffer(new SpecialOffer() , "Creazione offerta speciale" , "Aggiungi alla lista l'offerta" , "special-offer/create" , model);
+		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		return modifyOrCreateSpecialOffer(new SpecialOffer() , pizzas , "Creazione offerta speciale" , "Aggiungi alla lista l'offerta" , "special-offer/create" , model);
 	}
 	
 	@PostMapping("/create")
 	public String store(@Valid @ModelAttribute("special-offer") SpecialOffer specialOffer , BindingResult br , Model model) {
-		return saveInDb(specialOffer, br , "special-offer/create" ,  "redirect:/special-offers/" , "Creazione offerta" , "Aggiungi alla lista l'offerta" , model);
+		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		return saveInDb(specialOffer, pizzas, br , "special-offer/create" ,  "redirect:/special-offers/" , "Creazione offerta" , "Aggiungi alla lista l'offerta" , model);
 	}
 	
 	@GetMapping("/edit/{id}")
@@ -89,13 +97,15 @@ public class SpecialOfferController {
 		Optional<SpecialOffer> optSpecialOffer = service.findById(id);
 		SpecialOffer specialOffer = optSpecialOffer.get();
 		pageTitle = "Modifica l'offerta : " + specialOffer.getTitle();
-		return modifyOrCreateSpecialOffer(specialOffer , pageTitle , "Modifica elemento" , "special-offer/edit" , model);
+		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		return modifyOrCreateSpecialOffer(specialOffer , pizzas , pageTitle , "Modifica elemento" , "special-offer/edit" , model);
 	}
 	
 	@PostMapping("/edit/{id}")
 	public String update(@Valid @ModelAttribute("special-offer") SpecialOffer specialOffer , BindingResult br , Model model) {
 		pageTitle = "Modifica l'offerta: " + specialOffer.getTitle();
-		return saveInDb(specialOffer, br , "special-offer/edit" , "redirect:/special-offers/" + specialOffer.getId() , pageTitle , "Modifica elemento" , model);
+		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		return saveInDb(specialOffer, pizzas , br , "special-offer/edit" , "redirect:/special-offers/" + specialOffer.getId() , pageTitle , "Modifica elemento" , model);
 	}
 	
 	@PostMapping("/soft-delete/{id}")

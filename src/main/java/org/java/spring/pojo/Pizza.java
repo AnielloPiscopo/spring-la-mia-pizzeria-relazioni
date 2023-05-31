@@ -123,7 +123,7 @@ public class Pizza {
 			+ "\n" + "Name: " + getName()
 			+ "\n" + "Description: " + getDescription()
 			+ "\n" + "ImgUrl: " + getImgUrl()
-			+ "\n" + "Price: " + getPrice();
+			+ "\n" + "Price: " + getPrice() + "$";
 	}
 	
 	@Override
