@@ -105,4 +105,18 @@ public class SpecialOffer {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
+	
+	private String getInfo() {
+		return "Id: " + getId() + ";"
+			+ "\n" + "Title: " + getTitle() + ";"
+			+ "\n" + "Start Date: " + getStart() +";"
+			+ "\n" + "End Date: " + getEnd() +";"
+			+ "\n" + "Discount: " + getDiscount() + "%;"
+			+ "\n" + "Pizza: " + getPizza() + ";";
+	}
+	
+	@Override
+	public String toString() {
+		return getInfo();
+	}
 }

@@ -37,8 +37,6 @@ public class Pizza {
 	@Min(1)
 	private float price;
 	
-	private float discountedPrice;
-	
 	private boolean deleted = false;
 	
 	public Pizza(){}
@@ -119,11 +117,12 @@ public class Pizza {
 	}
 
 	private String getInfo() {
-		return "Id: " + getId()
-			+ "\n" + "Name: " + getName()
-			+ "\n" + "Description: " + getDescription()
-			+ "\n" + "ImgUrl: " + getImgUrl()
-			+ "\n" + "Price: " + getPrice() + "$";
+		return "Id: " + getId() + ";"
+			+ "\n" + "Name: " + getName() + ";"
+			+ "\n" + "Description: " + getDescription() +";"
+			+ "\n" + "ImgUrl: " + getImgUrl() + ";"
+			+ "\n" + "Price: " + getPrice() + "$;"
+			+ ((getDiscountedPrice() != getPrice()) ? "\n" + "Discounted Price: " + getDiscountedPrice() + "$;" : "");
 	}
 	
 	@Override
