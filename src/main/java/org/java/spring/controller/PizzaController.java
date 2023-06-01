@@ -58,7 +58,6 @@ public class PizzaController {
 		for(SpecialOffer so : specialOffers) {
 			so.setDeleted(trashed);
 			specialOfferServ.save(so);
-			
 		}
 		
 		service.save(pizza);

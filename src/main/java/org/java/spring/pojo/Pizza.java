@@ -3,6 +3,7 @@ package org.java.spring.pojo;
 import java.util.List;
 
 import org.hibernate.validator.constraints.URL;
+import org.java.spring.helper.Helper;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -94,19 +95,22 @@ public class Pizza {
 	}
 
 	public void setPrice(float price) {
-		this.price = price;
+		
+		this.price = Helper.getRoundedNum(price, 2);
 	}
 	
 	public float getDiscountedPrice() {
-		int maxDiscount = 0;
+//		int maxDiscount = 0;
+//		
+//		for(SpecialOffer so : getSpecialOffers()) {
+//			maxDiscount += so.getDiscount();
+//		}
 		
-		for(SpecialOffer so : getSpecialOffers()) {
-			maxDiscount += so.getDiscount();
-		}
+		int maxDiscount = getSpecialOffers().stream().map(so -> so.getDiscount()).reduce(0 , (sum , el) -> sum+el);
 		
 		float discountedPrice = getPrice() - (getPrice()/100 * maxDiscount);
 		
-		return discountedPrice;
+		return Helper.getRoundedNum(discountedPrice, 2);
 	}
 	
 	public boolean isDeleted() {
