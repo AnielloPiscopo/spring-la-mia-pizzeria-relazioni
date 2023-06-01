@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.URL;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +21,7 @@ public class Pizza {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@OneToMany(mappedBy = "pizza")
+	@OneToMany(mappedBy = "pizza" , cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<SpecialOffer> specialOffers;
 	
 	@NotBlank
@@ -57,7 +58,7 @@ public class Pizza {
 	}
 
 	public List<SpecialOffer> getSpecialOffers() {
-		return specialOffers;
+		return specialOffers.stream().filter(so -> !so.isDeleted()).toList();
 	}
 
 	public void setSpecialOffers(List<SpecialOffer> specialOffers) {

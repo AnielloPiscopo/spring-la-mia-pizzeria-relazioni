@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ita" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{pizza/frag/main-layout :: head(${title})}"> </head>
+  <head th:replace="~{frag/main-layout :: head(${title})}"> </head>
 
   <body>
+    <header th:replace="~{frag/header :: header}"></header>
     <main th:object="${pizza}">
       <h1>[[*{name}]]</h1>
       <img th:src="@{imgUrl}" alt="Immagine a caso" />

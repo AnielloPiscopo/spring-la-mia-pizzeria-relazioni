@@ -1,0 +1,19 @@
+<header th:fragment="header">
+  <nav>
+    <div class="my_logo-container">
+      <img src="" alt="Logo" />
+    </div>
+
+    <ul>
+      <li>
+        <a th:href="@{/}">Home</a>
+      </li>
+      <li>
+        <a th:href="@{/pizzas/}">Lista pizze</a>
+      </li>
+      <li>
+        <a th:href="@{/special-offers/}">Lista offerte speciali</a>
+      </li>
+    </ul>
+  </nav>
+</header>

@@ -103,7 +103,7 @@ public class SpecialOffer {
 	}
 
 	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+		this.deleted = (getPizza().isDeleted()) ? true : deleted;
 	}
 	
 	private String getInfo() {

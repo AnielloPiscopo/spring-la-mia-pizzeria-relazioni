@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.hibernate.Hibernate;
 import org.java.spring.pojo.Pizza;
+import org.java.spring.pojo.SpecialOffer;
 import org.java.spring.repo.PizzaRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,8 @@ public class PizzaService {
 		List<Pizza> pizzasWithRelations = new ArrayList<>();
 		
 		for(Pizza pizza : pizzas){
-			Hibernate.initialize(pizza.getSpecialOffers());
+			List<SpecialOffer> soList = pizza.getSpecialOffers();
+			Hibernate.initialize(soList);
 			pizzasWithRelations.add(pizza);
 		}
 		

@@ -50,19 +50,18 @@ public class SpecialOfferController {
 		return template;
 	}
 	
-	private String changeTheDeletedValue(int id , boolean trashed) {
+	private void changeTheDeletedValue(int id , boolean trashed) {
 		Optional<SpecialOffer> optSpecialOffer = service.findById(id);
 		SpecialOffer specialOffer = optSpecialOffer.get();
 		specialOffer.setDeleted(trashed);
 		service.save(specialOffer);
-		return "redirect:/special-offers/";
 	}
 	
 	@Autowired
 	private SpecialOfferService service;
 	
 	@Autowired
-	private PizzaService pizzaService;
+	private PizzaService pizzaServ;
 	
 	@GetMapping("/")
 	public String index(Model model ) {
@@ -82,13 +81,13 @@ public class SpecialOfferController {
 	
 	@GetMapping("/create")
 	public String create(Model model) {
-		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		List<Pizza> pizzas = pizzaServ.findAllAvailablePizzas();
 		return modifyOrCreateSpecialOffer(new SpecialOffer() , pizzas , "Creazione offerta speciale" , "Aggiungi alla lista l'offerta" , "special-offer/create" , model);
 	}
 	
 	@PostMapping("/create")
 	public String store(@Valid @ModelAttribute("special-offer") SpecialOffer specialOffer , BindingResult br , Model model) {
-		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		List<Pizza> pizzas = pizzaServ.findAllAvailablePizzas();
 		return saveInDb(specialOffer, pizzas, br , "special-offer/create" ,  "redirect:/special-offers/" , "Creazione offerta" , "Aggiungi alla lista l'offerta" , model);
 	}
 	
@@ -97,20 +96,21 @@ public class SpecialOfferController {
 		Optional<SpecialOffer> optSpecialOffer = service.findById(id);
 		SpecialOffer specialOffer = optSpecialOffer.get();
 		pageTitle = "Modifica l'offerta : " + specialOffer.getTitle();
-		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		List<Pizza> pizzas = pizzaServ.findAllAvailablePizzas();
 		return modifyOrCreateSpecialOffer(specialOffer , pizzas , pageTitle , "Modifica elemento" , "special-offer/edit" , model);
 	}
 	
 	@PostMapping("/edit/{id}")
 	public String update(@Valid @ModelAttribute("special-offer") SpecialOffer specialOffer , BindingResult br , Model model) {
 		pageTitle = "Modifica l'offerta: " + specialOffer.getTitle();
-		List<Pizza> pizzas = pizzaService.findAllAvailablePizzas();
+		List<Pizza> pizzas = pizzaServ.findAllAvailablePizzas();
 		return saveInDb(specialOffer, pizzas , br , "special-offer/edit" , "redirect:/special-offers/" + specialOffer.getId() , pageTitle , "Modifica elemento" , model);
 	}
 	
 	@PostMapping("/soft-delete/{id}")
 	public String softDelete(@PathVariable("id") int id) {
-		return changeTheDeletedValue(id, true);
+		changeTheDeletedValue(id, true);
+		return "redirect:/special-offers/";
 	}
 	
 	@PostMapping("/soft-delete-all")
@@ -131,7 +131,8 @@ public class SpecialOfferController {
 	
 	@PostMapping("/refresh/{id}")
 	public String refresh(@PathVariable("id") int id) {
-		return changeTheDeletedValue(id, false);
+		changeTheDeletedValue(id, false);
+		return "redirect:/special-offers/trash";
 	}
 	
 	@PostMapping("/refresh-all")

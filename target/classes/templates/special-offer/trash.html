@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ita" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{special-offer/frag/main-layout :: head(${title})}"> </head>
+  <head th:replace="~{frag/main-layout :: head(${title})}"> </head>
 
   <body>
+    <header th:replace="~{frag/header :: header}"></header>
     <main>
       <th:block
         th:replace="~{special-offer/frag/table-layout :: table(false , ${specialOffers})}"

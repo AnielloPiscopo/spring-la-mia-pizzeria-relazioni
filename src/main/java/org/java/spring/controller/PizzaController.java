@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.java.spring.pojo.Pizza;
+import org.java.spring.pojo.SpecialOffer;
 import org.java.spring.services.PizzaService;
+import org.java.spring.services.SpecialOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,16 +50,25 @@ public class PizzaController {
 		return template;
 	}
 	
-	private String changeTheDeletedValue(int id , boolean trashed) {
-		Optional<Pizza> optPizza = service.findById(id);
-		Pizza pizza = optPizza.get();
+	private void changeTheDeletedValue(Pizza pizza , boolean trashed) {
 		pizza.setDeleted(trashed);
+		
+		List<SpecialOffer> specialOffers = pizza.getSpecialOffers();
+		
+		for(SpecialOffer so : specialOffers) {
+			so.setDeleted(trashed);
+			specialOfferServ.save(so);
+			
+		}
+		
 		service.save(pizza);
-		return "redirect:/pizzas/";
 	}
 	
 	@Autowired
 	private PizzaService service;
+	
+	@Autowired
+	private SpecialOfferService specialOfferServ;
 	
 	@GetMapping("/")
 	public String index(Model model ) {
@@ -107,15 +118,17 @@ public class PizzaController {
 	
 	@PostMapping("/soft-delete/{id}")
 	public String softDelete(@PathVariable("id") int id) {
-		return changeTheDeletedValue(id, true);
+		Optional<Pizza> optPizza = service.findById(id);
+		Pizza pizza = optPizza.get();
+		changeTheDeletedValue(pizza, true);
+		return "redirect:/pizzas/";
 	}
 	
 	@PostMapping("/soft-delete-all")
 	public String softDeleteAll() {
 		List<Pizza> pizzas = service.findAllAvailablePizzasWithRel();
 		for(Pizza pizza : pizzas) {
-			pizza.setDeleted(true);
-			service.save(pizza);
+			changeTheDeletedValue(pizza, true);
 		}
 		return "redirect:/pizzas/";
 	}
@@ -134,15 +147,17 @@ public class PizzaController {
 	
 	@PostMapping("/refresh/{id}")
 	public String refresh(@PathVariable("id") int id) {
-		return changeTheDeletedValue(id, false);
+		Optional<Pizza> optPizza = service.findById(id);
+		Pizza pizza = optPizza.get();
+		changeTheDeletedValue(pizza, false);
+		return "redirect:/pizzas/trash";
 	}
 	
 	@PostMapping("/refresh-all")
 	public String refreshAll() {
 		List<Pizza> pizzas = service.findAllTrashedPizzasWithRel();
 		for(Pizza pizza : pizzas) {
-			pizza.setDeleted(false);
-			service.save(pizza);
+			changeTheDeletedValue(pizza, false);
 		}
 		return "redirect:/pizzas/trash";
 	}

@@ -4,13 +4,8 @@
 
   <body>
     <header th:replace="~{frag/header :: header}"></header>
-    <main th:object="${specialOffer}">
-      <h1>[[*{title}]]</h1>
-      <div>[[*{start}]] - [[*{end}]]</div>
-      <div>[[*{discount}]]%</div>
-      <div>[[*{pizza}]]</div>
-
-      <a th:href="@{/special-offers/}">Go to index</a>
+    <main>
+      <h1>[[${title}]]</h1>
     </main>
   </body>
 </html>
