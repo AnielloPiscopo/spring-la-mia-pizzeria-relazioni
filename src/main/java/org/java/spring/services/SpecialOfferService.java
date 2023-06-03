@@ -13,30 +13,62 @@ public class SpecialOfferService {
 	@Autowired
 	private SpecialOfferRepo repo;
 	
+	/**
+	 * 
+	 * Return all SpecialOffer elements in the database
+	 * @return specialOffers
+	 */
 	public List<SpecialOffer> findAll() {
 		return repo.findAll();
-}
+	}
 
+	/**
+	 * 
+	 * Return all SpecialOffer elements in the database with the boolean "deleted" set to false
+	 * @return specialOffers
+	 */
 	public List<SpecialOffer> findAllAvailableSpecialOffers() {
 		return repo.findByDeletedFalse();
 	}
 	
+	/**
+	 * 
+	 * Return all SpecialOffer elements in the database with the boolean "deleted" set to true
+	 * @return specialOffers
+	 */
 	public List<SpecialOffer> findAllTrashedSpecialOffers() {
 		return repo.findByDeletedTrue();
 	}
 	
+	/**
+	 * 
+	 * Return a SpecialOffer element with an identical id to the given ones
+	 * @return specialOfferOpt
+	 */
 	public Optional<SpecialOffer> findById(int id) {
 		return repo.findById(id);
 	}
 	
+	/**
+	 * 
+	 * Save an element in the SpecialOffer table of the database
+	 */
 	public SpecialOffer save(SpecialOffer specialOffer) {
 		return repo.save(specialOffer);
 	}
 	
+	/**
+	 * 
+	 * Delete an element from the SpecialOffer table of the database
+	 */
 	public void delete(SpecialOffer specialOffer) {
 		repo.delete(specialOffer);
 	}
 	
+	/**
+	 * 
+	 * Delete all elements from the SpecialOffer table of the database
+	 */
 	public void deleteAll(List<SpecialOffer> specialOffers) {
 		repo.deleteAll(specialOffers);
 	}
