@@ -42,8 +42,9 @@
         <th>Descrizione</th>
         <th>Img_Url</th>
         <th>Price</th>
-        <th>Special Offers</th>
-        <th>Discounted Price</th>
+        <th>Offerte speciali</th>
+        <th>Prezzo scontato</th>
+        <th>Ingredienti</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -74,6 +75,9 @@
         </td>
         <td>
           <span>[[*{discountedPrice}]] $</span>
+        </td>
+        <td>
+          <span th:each="ingredient : *{ingredients}" th:object="${ingredient}">[[*{name}]]</span>
         </td>
         <td>
           <a th:href="@{/pizzas/{id} (id=${pizza.id})}">Show</a>

@@ -1,19 +1,30 @@
 <header th:fragment="header">
-  <nav>
-    <div class="my_logo-container">
-      <img src="" alt="Logo" />
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" th:href="@{/}">
+        <img src="#" alt="Logo" />
+      </a>
+      <a
+        role="button"
+        class="navbar-burger burger"
+        aria-label="menu"
+        aria-expanded="false"
+        data-target="navbarMenu"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
     </div>
 
-    <ul class="is-flex">
-      <li>
-        <a th:href="@{/}">Home</a>
-      </li>
-      <li>
-        <a th:href="@{/pizzas/}">Lista pizze</a>
-      </li>
-      <li>
-        <a th:href="@{/special-offers/}">Lista offerte speciali</a>
-      </li>
-    </ul>
+    <div id="navbarMenu" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" th:href="@{/pizzas/}">Lista pizze</a>
+        <a class="navbar-item" th:href="@{/special-offers/}"
+          >Lista offerte speciali</a
+        >
+        <a class="navbar-item" th:href="@{/ingredients/}">Lista ingredienti</a>
+      </div>
+    </div>
   </nav>
 </header>

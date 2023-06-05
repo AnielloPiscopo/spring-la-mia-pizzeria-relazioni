@@ -8,9 +8,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -27,9 +29,11 @@ public class SpecialOffer {
 	private String title;
 	
 	@NotNull
+	@PastOrPresent
 	private LocalDate start;
 	
 	@NotNull
+	@Future
 	private LocalDate end;
 	
 	@NotNull

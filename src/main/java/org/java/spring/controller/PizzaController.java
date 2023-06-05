@@ -3,10 +3,12 @@ package org.java.spring.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.java.spring.pojo.Ingredient;
 import org.java.spring.pojo.Pizza;
 import org.java.spring.pojo.SpecialOffer;
-import org.java.spring.services.PizzaService;
-import org.java.spring.services.SpecialOfferService;
+import org.java.spring.services.IngredientServ;
+import org.java.spring.services.PizzaServ;
+import org.java.spring.services.SpecialOfferServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +50,7 @@ public class PizzaController {
 			return templateToEdit;
 		}
 		
-		service.save(pizza);
+		serv.save(pizza);
 		return templateToRedirect;
 	}
 	
@@ -58,6 +60,8 @@ public class PizzaController {
 	 * @return template
 	 */
 	private String modifyOrCreatePizza(Pizza pizza , String title , String btnText , String template , Model model) {
+		List<Ingredient> ingredients = ingredientServ.findAll();
+		model.addAttribute("ingredients" , ingredients);
 		model.addAttribute("btnText" , btnText);
 		model.addAttribute("pizza", pizza);
 		model.addAttribute("title" , title);
@@ -78,14 +82,17 @@ public class PizzaController {
 			specialOfferServ.save(so);
 		}
 		
-		service.save(pizza);
+		serv.save(pizza);
 	}
 	
 	@Autowired
-	private PizzaService service;
+	private PizzaServ serv;
 	
 	@Autowired
-	private SpecialOfferService specialOfferServ;
+	private SpecialOfferServ specialOfferServ;
+	
+	@Autowired
+	private IngredientServ ingredientServ;
 	
 	/*
 	 * 
@@ -93,7 +100,7 @@ public class PizzaController {
 	 */
 	@GetMapping("/")
 	public String index(Model model ) {
-		List<Pizza> pizzas = service.findAllAvailablePizzasWithRel();
+		List<Pizza> pizzas = serv.findAllAvailablePizzasWithRel();
 		return getPizzas(pizzas , "Lista pizze" , "pizza/index" , model);
 	}
 	
@@ -103,7 +110,7 @@ public class PizzaController {
 	 */
 	@PostMapping("/")
 	public String index(Model model , @RequestParam(name = "name") String name) {
-		List<Pizza> pizzas = service.filterByNameForAvailablePizzasWithRel(name);
+		List<Pizza> pizzas = serv.filterByNameForAvailablePizzasWithRel(name);
 		return getPizzas(pizzas , "Lista pizze" , "pizza/index" , model);
 	}
 	
@@ -113,7 +120,7 @@ public class PizzaController {
 	 */
 	@GetMapping("/{id}")
 	public String show(Model model , @PathVariable("id") int id) {
-		Optional<Pizza> optPizza = service.findByIdWithRel(id);
+		Optional<Pizza> optPizza = serv.findByIdWithRel(id);
 		Pizza pizza = optPizza.get();
 		pageTitle = "Pizza " + pizza.getName();
 		model.addAttribute("pizza" , pizza);
@@ -145,7 +152,7 @@ public class PizzaController {
 	 */
 	@GetMapping("/edit/{id}")
 	public String edit(Model model , @PathVariable("id") int id) {
-		Optional<Pizza> optPizza = service.findByIdWithRel(id);
+		Optional<Pizza> optPizza = serv.findByIdWithRel(id);
 		Pizza pizza = optPizza.get();
 		pageTitle = "Modifica la pizza: " + pizza.getName();
 		return modifyOrCreatePizza(pizza , pageTitle , "Modifica elemento" , "pizza/edit" , model);
@@ -167,7 +174,7 @@ public class PizzaController {
 	 */
 	@GetMapping("/trash")
 	public String trash(Model model ) {
-		List<Pizza> pizzas = service.findAllTrashedPizzasWithRel();
+		List<Pizza> pizzas = serv.findAllTrashedPizzasWithRel();
 		return getPizzas(pizzas , "Lista pizze cestinate" , "pizza/trash" , model);
 	}
 	
@@ -177,7 +184,7 @@ public class PizzaController {
 	 */
 	@PostMapping("/trash")
 	public String trash(Model model , @RequestParam(name = "name") String name) {
-		List<Pizza> pizzas = service.filterByNameForTrashedPizzasWithRel(name);
+		List<Pizza> pizzas = serv.filterByNameForTrashedPizzasWithRel(name);
 		return getPizzas(pizzas , "Lista pizze cestinate" , "pizza/trash" , model);
 	}
 	
@@ -187,7 +194,7 @@ public class PizzaController {
 	 */
 	@PostMapping("/soft-delete/{id}")
 	public String softDelete(@PathVariable("id") int id) {
-		Optional<Pizza> optPizza = service.findById(id);
+		Optional<Pizza> optPizza = serv.findById(id);
 		Pizza pizza = optPizza.get();
 		changeTheDeletedValue(pizza, true);
 		return "redirect:/pizzas/";
@@ -199,7 +206,7 @@ public class PizzaController {
 	 */
 	@PostMapping("/soft-delete-all")
 	public String softDeleteAll() {
-		List<Pizza> pizzas = service.findAllAvailablePizzasWithRel();
+		List<Pizza> pizzas = serv.findAllAvailablePizzasWithRel();
 //		for(Pizza pizza : pizzas) {
 //			changeTheDeletedValue(pizza, true);
 //		}
@@ -213,7 +220,7 @@ public class PizzaController {
 	 */
 	@PostMapping("/refresh/{id}")
 	public String refresh(@PathVariable("id") int id) {
-		Optional<Pizza> optPizza = service.findById(id);
+		Optional<Pizza> optPizza = serv.findById(id);
 		Pizza pizza = optPizza.get();
 		changeTheDeletedValue(pizza, false);
 		return "redirect:/pizzas/trash";
@@ -225,7 +232,7 @@ public class PizzaController {
 	 */
 	@PostMapping("/refresh-all")
 	public String refreshAll() {
-		List<Pizza> pizzas = service.findAllTrashedPizzasWithRel();
+		List<Pizza> pizzas = serv.findAllTrashedPizzasWithRel();
 //		for(Pizza pizza : pizzas) {
 //			changeTheDeletedValue(pizza, false);
 //		}
@@ -239,9 +246,9 @@ public class PizzaController {
 	 */
 	@PostMapping("/delete/{id}")
 	public String delete(@PathVariable("id") int id) {
-		Optional<Pizza> optPizza = service.findByIdWithRel(id);
+		Optional<Pizza> optPizza = serv.findByIdWithRel(id);
 		Pizza pizza = optPizza.get();
-		service.delete(pizza);
+		serv.delete(pizza);
 		return "redirect:/pizzas/trash";
 	}
 	
@@ -251,8 +258,8 @@ public class PizzaController {
 	 */
 	@PostMapping("/delete-all")
 	public String deleteAll() {
-		List<Pizza> pizzas = service.findAllTrashedPizzasWithRel();
-		service.deleteAll(pizzas);
+		List<Pizza> pizzas = serv.findAllTrashedPizzasWithRel();
+		serv.deleteAll(pizzas);
 		return "redirect:/pizzas/trash";
 	}
 }

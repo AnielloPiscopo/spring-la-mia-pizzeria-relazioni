@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SpecialOfferService {
+public class SpecialOfferServ {
 	@Autowired
 	private SpecialOfferRepo repo;
 	
@@ -53,8 +53,8 @@ public class SpecialOfferService {
 	 * 
 	 * Save an element in the SpecialOffer table of the database
 	 */
-	public SpecialOffer save(SpecialOffer specialOffer) {
-		return repo.save(specialOffer);
+	public void save(SpecialOffer specialOffer) {
+		repo.save(specialOffer);
 	}
 	
 	/**

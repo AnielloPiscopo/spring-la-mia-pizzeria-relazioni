@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 @Service
-public class PizzaService {
+public class PizzaServ {
 	@Autowired
 	private  PizzaRepo repo;
 	

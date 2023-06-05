@@ -23,7 +23,9 @@
       cols="30"
       rows="10"
       placeholder="Inserisci descrizione"
-    >[[*{description}]]</textarea>
+    >
+[[*{description}]]</textarea
+    >
     <span th:if="${errors != null && errors.hasFieldErrors('description')}"
       >[[${errors.getFieldError('description').defaultMessage}]]</span
     >
@@ -50,6 +52,19 @@
     <span th:if="${errors != null && errors.hasFieldErrors('price')}"
       >[[${errors.getFieldError('price').defaultMessage}]]</span
     >
+  </div>
+
+  <div class="my-form-el">
+    <div th:each="ingredient : ${ingredients}" th:object="${ingredient}">
+      <input
+        th:id="${'ingredient-' + ingredient.id}"
+        th:value="*{id}"
+        th:checked="${pizza.ingredients.contains(ingredient)}"
+        type="checkbox"
+        name="categories"
+      />
+      <label th:for="${'ingredient-' + ingredient.id}">[[ *{name} ]]</label>
+    </div>
   </div>
 
   <button type="submit">[[${btnText}]]</button>

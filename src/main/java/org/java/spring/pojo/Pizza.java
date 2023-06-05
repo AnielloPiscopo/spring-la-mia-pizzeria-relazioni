@@ -1,5 +1,6 @@
 package org.java.spring.pojo;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.validator.constraints.URL;
@@ -10,6 +11,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -22,8 +26,16 @@ public class Pizza {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@OneToMany(mappedBy = "pizza" , cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OneToMany(mappedBy = "pizza" , cascade = CascadeType.REMOVE)
 	private List<SpecialOffer> specialOffers;
+	
+	@ManyToMany
+	@JoinTable(
+	        name = "pizza_ingredient",
+	        joinColumns = @JoinColumn(name = "pizza_id"),
+	        inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+	    )
+	private List<Ingredient> ingredients;
 	
 	@NotBlank
 	@Size(min = 3 , max = 100)
@@ -43,11 +55,13 @@ public class Pizza {
 	
 	public Pizza(){}
 
-	public Pizza(String name, String description, String imgUrl, float price) {
+	public Pizza(String name, String description, String imgUrl, float price , Ingredient... ingredients) {
 		setName(name);
 		setDescription(description);
 		setImgUrl(imgUrl);
 		setPrice(price);
+		
+		setIngredients(ingredients);
 	}
 
 	public int getId() {
@@ -64,6 +78,26 @@ public class Pizza {
 
 	public void setSpecialOffers(List<SpecialOffer> specialOffers) {
 		this.specialOffers = specialOffers;
+	}
+	
+	public List<Ingredient> getIngredients() {
+		return ingredients;
+	}
+	
+	public void setIngredients(List<Ingredient> ingredients) {
+		this.ingredients = ingredients;
+	}
+	
+	public void setIngredients(Ingredient[] ingredients) {
+		setIngredients(Arrays.asList(ingredients));
+	}
+	
+	public void addIngredient(Ingredient ingredient) {
+		getIngredients().add(ingredient);
+	}
+	
+	public void removeIngredient(Ingredient ingredient) {
+		getIngredients().remove(ingredient);
 	}
 
 	public String getName() {

@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.java.spring.pojo.Pizza;
 import org.java.spring.pojo.SpecialOffer;
-import org.java.spring.services.PizzaService;
-import org.java.spring.services.SpecialOfferService;
+import org.java.spring.services.PizzaServ;
+import org.java.spring.services.SpecialOfferServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,7 +47,7 @@ public class SpecialOfferController {
 			return templateToEdit;
 		}
 		
-		service.save(specialOffer);
+		serv.save(specialOffer);
 		return templateToRedirect;
 	}
 	
@@ -70,14 +70,14 @@ public class SpecialOfferController {
 	 */
 	private void changeTheDeletedValue(SpecialOffer specialOffer , boolean trashed) {
 		specialOffer.setDeleted(trashed);
-		service.save(specialOffer);
+		serv.save(specialOffer);
 	}
 	
 	@Autowired
-	private SpecialOfferService service;
+	private SpecialOfferServ serv;
 	
 	@Autowired
-	private PizzaService pizzaServ;
+	private PizzaServ pizzaServ;
 	
 	/*
 	 * 
@@ -85,7 +85,7 @@ public class SpecialOfferController {
 	 */
 	@GetMapping("/")
 	public String index(Model model ) {
-		List<SpecialOffer> specialOffers = service.findAllAvailableSpecialOffers();
+		List<SpecialOffer> specialOffers = serv.findAllAvailableSpecialOffers();
 		return getSpecialOffers(specialOffers , "Lista offerte speciali" , "special-offer/index" , model);
 	}
 	
@@ -95,7 +95,7 @@ public class SpecialOfferController {
 	 */
 	@GetMapping("/{id}")
 	public String show(Model model , @PathVariable("id") int id) {
-		Optional<SpecialOffer> optSpecialOffer = service.findById(id);
+		Optional<SpecialOffer> optSpecialOffer = serv.findById(id);
 		SpecialOffer specialOffer = optSpecialOffer.get();
 		pageTitle = "Offerta speciale: " + specialOffer.getTitle();
 		model.addAttribute("specialOffer" , specialOffer);
@@ -129,7 +129,7 @@ public class SpecialOfferController {
 	 */
 	@GetMapping("/edit/{id}")
 	public String edit(Model model , @PathVariable("id") int id) {
-		Optional<SpecialOffer> optSpecialOffer = service.findById(id);
+		Optional<SpecialOffer> optSpecialOffer = serv.findById(id);
 		SpecialOffer specialOffer = optSpecialOffer.get();
 		pageTitle = "Modifica l'offerta : " + specialOffer.getTitle();
 		List<Pizza> pizzas = pizzaServ.findAllAvailablePizzas();
@@ -153,7 +153,7 @@ public class SpecialOfferController {
 	 */
 	@GetMapping("/trash")
 	public String trash(Model model ) {
-		List<SpecialOffer> specialOffers = service.findAllTrashedSpecialOffers();
+		List<SpecialOffer> specialOffers = serv.findAllTrashedSpecialOffers();
 		return getSpecialOffers(specialOffers , "Lista offerte cestinate" , "special-offer/trash" , model);
 	}
 	
@@ -163,7 +163,7 @@ public class SpecialOfferController {
 	 */
 	@PostMapping("/soft-delete/{id}")
 	public String softDelete(@PathVariable("id") int id) {
-		Optional<SpecialOffer> optSpecialOffer = service.findById(id);
+		Optional<SpecialOffer> optSpecialOffer = serv.findById(id);
 		SpecialOffer specialOffer = optSpecialOffer.get();
 		changeTheDeletedValue(specialOffer, true);
 		return "redirect:/special-offers/";
@@ -175,7 +175,7 @@ public class SpecialOfferController {
 	 */
 	@PostMapping("/soft-delete-all")
 	public String softDeleteAll() {
-		List<SpecialOffer> specialOffers = service.findAllAvailableSpecialOffers();
+		List<SpecialOffer> specialOffers = serv.findAllAvailableSpecialOffers();
 //		for(SpecialOffer so : specialOffers) {
 //			changeTheDeletedValue(so,true);
 //		}
@@ -189,7 +189,7 @@ public class SpecialOfferController {
 	 */
 	@PostMapping("/refresh/{id}")
 	public String refresh(@PathVariable("id") int id) {
-		Optional<SpecialOffer> optSpecialOffer = service.findById(id);
+		Optional<SpecialOffer> optSpecialOffer = serv.findById(id);
 		SpecialOffer specialOffer = optSpecialOffer.get();
 		changeTheDeletedValue(specialOffer, false);
 		return "redirect:/special-offers/trash";
@@ -201,7 +201,7 @@ public class SpecialOfferController {
 	 */
 	@PostMapping("/refresh-all")
 	public String refreshAll() {
-		List<SpecialOffer> specialOffers = service.findAllTrashedSpecialOffers();
+		List<SpecialOffer> specialOffers = serv.findAllTrashedSpecialOffers();
 //		for(SpecialOffer so : specialOffers) {
 	//		changeTheDeletedValue(so,false);
 	//	}
@@ -215,9 +215,9 @@ public class SpecialOfferController {
 	 */
 	@PostMapping("/delete/{id}")
 	public String delete(@PathVariable("id") int id) {
-		Optional<SpecialOffer> optSpecialOffer = service.findById(id);
+		Optional<SpecialOffer> optSpecialOffer = serv.findById(id);
 		SpecialOffer specialOffer = optSpecialOffer.get();
-		service.delete(specialOffer);
+		serv.delete(specialOffer);
 		return "redirect:/special-offers/trash";
 	}
 	
@@ -227,8 +227,8 @@ public class SpecialOfferController {
 	 */
 	@PostMapping("/delete-all")
 	public String deleteAll() {
-		List<SpecialOffer> specialOffers = service.findAllTrashedSpecialOffers();
-		service.deleteAll(specialOffers);
+		List<SpecialOffer> specialOffers = serv.findAllTrashedSpecialOffers();
+		serv.deleteAll(specialOffers);
 		return "redirect:/special-offers/trash";
 	}
 }

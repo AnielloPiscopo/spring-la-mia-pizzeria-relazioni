@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.java.spring.pojo.Ingredient;
 import org.java.spring.pojo.Pizza;
 import org.java.spring.pojo.SpecialOffer;
-import org.java.spring.services.PizzaService;
-import org.java.spring.services.SpecialOfferService;
+import org.java.spring.services.IngredientServ;
+import org.java.spring.services.PizzaServ;
+import org.java.spring.services.SpecialOfferServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,12 +20,16 @@ import com.github.javafaker.Faker;
 @SpringBootApplication
 public class SpringLaMiaPizzeriaCrudApplication implements CommandLineRunner {
 	@Autowired
-	private PizzaService pizzaService;
+	private PizzaServ pizzaServ;
 	
 	@Autowired
-	private SpecialOfferService specialOfferService;
+	private SpecialOfferServ specialOfferServ;
+	
+	@Autowired
+	private IngredientServ ingredientServ;
 	
 	private static List<Pizza> pizzasList = new ArrayList<>();
+	private static List<Ingredient> ingredientsList = new ArrayList<>();
 
 	public static void main(String[] args){
 		SpringApplication.run(SpringLaMiaPizzeriaCrudApplication.class, args);
@@ -33,18 +39,36 @@ public class SpringLaMiaPizzeriaCrudApplication implements CommandLineRunner {
 		addToDb();
 	}
 	
-	private List<Pizza> createPizzasList() {
+	private List<Ingredient> createIngredientsList(){
+		Faker faker = new Faker();
+		int min = 10;
+		int max = 50;
+		int rndNumber = faker.number().numberBetween(min,max);
+		
+		for(int i=1 ; i<rndNumber ; i++) {
+			String rndName = String.join(", " , faker.lorem().words());
+			Ingredient rndIngredient = new Ingredient(rndName);
+			ingredientsList.add(rndIngredient);
+		}
+		
+		return ingredientsList;
+	}
+	
+	private List<Pizza> createPizzasList(List<Ingredient> ingredients) {
 		Faker faker = new Faker();
 		int min = 10;
 		int max = 100;
 		int rndNumber = faker.number().numberBetween(min,max);
+		int ingredientsSize = ingredients.size();
 		
 		for(int i=1 ; i<rndNumber ; i++) {
 			String rndName = String.join(", " , faker.lorem().words());
 			String rndDescription = faker.lorem().sentence(min);
 			String rndImgUrl = faker.internet().image();
 			float rndPrice = (float) faker.number().randomDouble(2, 1, max);
-			Pizza rndPizza = new Pizza(rndName , rndDescription , rndImgUrl , rndPrice);
+			int rndIngredientsIndex = faker.number().numberBetween(0, ingredientsSize);
+			Ingredient selectedIngredient = ingredients.get(rndIngredientsIndex);
+			Pizza rndPizza = new Pizza(rndName , rndDescription , rndImgUrl , rndPrice , selectedIngredient);
 			pizzasList.add(rndPizza);
 		}
 		
@@ -64,7 +88,7 @@ public class SpringLaMiaPizzeriaCrudApplication implements CommandLineRunner {
 		for(int i=1 ; i<rndNumber ; i++) {
 			String rndTitle = String.join(", " , faker.lorem().words());
 			LocalDate rndStartDate = LocalDate.parse("2007-12-03");
-			LocalDate rndEndDate = LocalDate.parse("2007-12-03");
+			LocalDate rndEndDate = LocalDate.parse("2045-12-03");
 			int rndDiscount = faker.number().numberBetween(minDiscount, maxDiscount);
 			int rndPizzasIndex = faker.number().numberBetween(0, pizzasSize);
 			Pizza selectedPizza = pizzas.get(rndPizzasIndex);
@@ -76,12 +100,16 @@ public class SpringLaMiaPizzeriaCrudApplication implements CommandLineRunner {
 	}
 	
 	private void addToDb() {
-		for(Pizza p : createPizzasList()) {
-			pizzaService.save(p);
+		for(Ingredient i : createIngredientsList()) {
+			ingredientServ.save(i);
+		}
+		
+		for(Pizza p : createPizzasList(ingredientsList)) {
+			pizzaServ.save(p);
 		}
 		
 		for(SpecialOffer so : createSpecialOffersList(pizzasList)) {
-			specialOfferService.save(so);
+			specialOfferServ.save(so);
 		}
 	}
 
