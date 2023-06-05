@@ -59,9 +59,9 @@
       <input
         th:id="${'ingredient-' + ingredient.id}"
         th:value="*{id}"
-        th:checked="${pizza.ingredients.contains(ingredient)}"
+        th:checked="${create} ? false : ${pizza.ingredients.contains(ingredient)}"
         type="checkbox"
-        name="categories"
+        name="ingredients"
       />
       <label th:for="${'ingredient-' + ingredient.id}">[[ *{name} ]]</label>
     </div>
